@@ -15,16 +15,8 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 
     public function indexCategory($id)
     {
-        $query = new Zend_Search_Lucene_Search_Query_MultiTerm();
-        $query->addTerm(new Zend_Search_Lucene_Index_Term($id, 'entity_id'),true);
-        $query->addTerm(new Zend_Search_Lucene_Index_Term('category', 'doctype'),true);
-        $hits  = $this->find($query);
-        foreach ($hits as $hit) {
-            $this->delete($hit->id);
-        }
-        $category = Mage::getModel('catalog/category')
-            ->setStoreId(Mage::app()->getStore()->getId())
-            ->load($id);
+        $this->deleteCategoryDoc($id);
+        $category = $this->loadCategory($id);
         $doc = new Zend_Search_Lucene_Document();
         $content = strip_tags($this->getCategoriesStaticBlock($category));
         $doc->addField(Zend_Search_Lucene_Field::UnStored('content', $content));
@@ -37,6 +29,26 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
         $this->addDocument($doc);
     }
 
+    protected function deleteCategoryDoc($id)
+    {
+        $query = new Zend_Search_Lucene_Search_Query_MultiTerm();
+        $query->addTerm(new Zend_Search_Lucene_Index_Term($id, 'entity_id'),true);
+        $query->addTerm(new Zend_Search_Lucene_Index_Term('category', 'doctype'),true);
+        $this->deleteHits($this->find($query));
+    }
+
+    protected function deleteHits($hits)
+    {
+        foreach ($hits as $hit) {
+            $this->delete($hit->id);
+        }
+    }
+    protected function loadCategory($id)
+    {
+        return Mage::getModel('catalog/category')
+            ->setStoreId(Mage::app()->getStore()->getId())
+            ->load($id);
+    }
     protected function getCategoriesStaticBlock($category)
     {
         return Mage::app()->getLayout()->createBlock('cms/block')
