@@ -17,7 +17,7 @@
                 <use>standard</use>
                 <args>
                     <module>Rotor_Lucene</module>
-                    <frontName>lucene</frontName>
+                    <frontName>search</frontName>
                 </args>
             </lucene>
         </routers>

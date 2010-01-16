@@ -4,6 +4,9 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     const INDEX_DIR = 'var/lucene/index';
     const SHORT_CONTENT_CHAR_COUNT = 1000;
 
+    var $_query = '';
+    var $_results;
+
     public function __construct()
     {
         try {
@@ -56,4 +59,19 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
             ->toHtml();
     }
 
+    public function setQuery($query)
+    {
+        $this->_query = $query;
+    }
+
+    public function getResults()
+    {
+        if(!isset($this->_results)) {
+            $this->_results = array();
+            foreach($this->find($this->_query) as $hit) {
+                $this->_results[] = new Rotor_Lucene_Model_Index_Document($hit);
+            }
+        }
+        return $this->_results;
+    }
 }
