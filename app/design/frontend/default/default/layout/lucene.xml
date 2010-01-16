@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <lucene_index_index>
+        <reference name="content">
+            <block type="lucene/results" name="lucene.results" template="lucene/results.phtml"/>
+        </reference>
+    </lucene_index_index>
+</layout>
