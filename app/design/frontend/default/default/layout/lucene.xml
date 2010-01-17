@@ -2,7 +2,7 @@
 <layout version="0.1.0">
     <lucene_index_index>
         <reference name="content">
-            <block type="lucene/results" name="lucene.results" template="lucene/results.phtml"/>
+            <block type="lucene/result" name="lucene.result" template="lucene/result.phtml"/>
         </reference>
     </lucene_index_index>
 </layout>

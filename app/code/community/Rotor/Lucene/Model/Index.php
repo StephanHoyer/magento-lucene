@@ -64,6 +64,11 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
         $this->_query = $query;
     }
 
+    public function getQuery()
+    {
+        return $this->_query;
+    }
+
     public function getResults()
     {
         if(!isset($this->_results)) {

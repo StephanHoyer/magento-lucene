@@ -1,5 +1,5 @@
 <?php
-class Rotor_Lucene_Model_Index_Document
+class Rotor_Lucene_Model_Index_Document extends Varien_Object
 {
     var $_data = array();
 
@@ -9,10 +9,5 @@ class Rotor_Lucene_Model_Index_Document
         foreach($hit->getDocument()->getFieldNames() as $field) {
             $this->_data[$field] = $hit->getDocument()->getFieldValue($field);
         }
-    }
-
-    public function getData()
-    {
-        return $_data;
     }
 }
