@@ -7,6 +7,11 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     var $_query = '';
     var $_results;
 
+    protected function getDefaultSimilarity()
+    {
+        return '0.5';
+    }
+
     public function __construct()
     {
         try {
@@ -73,7 +78,7 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     {
         if(!isset($this->_results)) {
             $this->_results = array();
-            foreach($this->find($this->_query) as $hit) {
+            foreach($this->find($this->_query.'~'.$this->getDefaultSimilarity()) as $hit) {
                 $this->_results[] = new Rotor_Lucene_Model_Index_Document($hit);
             }
         }
