@@ -1,0 +1,14 @@
+<form id="search_mini_form" action="<?php echo $this->getResultUrl() ?>" method="get">
+<fieldset class="form-search">
+    <legend><?php echo $this->__('Search Site') ?></legend>
+    <label for="search"><?php echo $this->__('Search:') ?></label>
+    <input 
+        id="search"
+        type="text"
+        class="input-text"
+        name="q"
+        value="<?php echo $this->getEscapedQueryText() ?>"
+    />
+    <button type="submit" class="button"><span><?php echo $this->__('Search') ?></span></button>
+</fieldset>
+</form>

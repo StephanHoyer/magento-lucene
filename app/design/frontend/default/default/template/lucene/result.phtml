@@ -27,6 +27,9 @@
 <div class="page-header">
     <h2 class="pageheader"><?php echo $this->__('search results');?></h2>
 </div>
+<div class="search-form">
+    <?php echo $this->getChildHtml('form'); ?>
+</div>
 <?php if($this->getResultCount()): ?>
     <h3>
         <?php echo $this->__("Search results for '%s':", $this->getEscapedQueryText()) ?>
