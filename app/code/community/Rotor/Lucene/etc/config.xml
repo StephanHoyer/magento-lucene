@@ -40,5 +40,10 @@
                 <class>Rotor_Lucene_Helper</class>
             </lucene>
         </helpers>
+        <models>
+            <lucene>
+                <class>Rotor_Lucene_Model</class>
+            </lucene>
+        </models>
     </global>
 </config>

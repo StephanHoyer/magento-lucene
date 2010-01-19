@@ -33,7 +33,11 @@
 <?php if($this->getResultCount()): ?>
     <h3>
         <?php echo $this->__("Search results for '%s':", $this->getEscapedQueryText()) ?>
-        <?php echo $this->__("%d hits.", $this->getResultCount()) ?>
+        <?php if($this->getResultCount()>1): ?>
+            <?php echo $this->__("%d hits.", $this->getResultCount()); ?>
+        <?php else: ?>
+            <?php echo $this->__("1 hit."); ?>
+        <?php endif; ?>
     </h3>
     <?php foreach($this->getResults() as $result): ?>
         <div class="search-result">
