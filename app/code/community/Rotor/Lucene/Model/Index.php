@@ -17,6 +17,7 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
             parent::__construct(new Zend_Search_Lucene(self::INDEX_DIR, false));
         } catch (Zend_Search_Lucene_Exception $e) {
             parent::__construct(new Zend_Search_Lucene(self::INDEX_DIR, true));
+            Zend_Search_Lucene_Search_QueryParser::setDefaultEncoding("UTF-8");
         }
     }
 
