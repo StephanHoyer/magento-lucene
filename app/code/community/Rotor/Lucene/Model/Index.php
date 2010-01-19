@@ -34,6 +34,20 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
                 substr($content, 0, self::SHORT_CONTENT_CHAR_COUNT)));
         $doc->addField(Zend_Search_Lucene_Field::UnIndexed('url', $category->getUrl()));
         $doc->addField(Zend_Search_Lucene_Field::Keyword('entity_id', $category->getId()));
+        if($category->getImage()) {
+            try {
+                $image = Mage::getModel('catalog/product_image')
+                ->setBaseFile('../category/'.$category->getImage())
+                ->setHeight(100)
+                ->setWidth(100)
+                ->resize()
+                ->saveFile()
+                ->getUrl();
+                $doc->addField(Zend_Search_Lucene_Field::UnIndexed('image', $image));
+            } catch (Exception $e) {
+
+            }
+        }
         $this->addDocument($doc);
     }
 

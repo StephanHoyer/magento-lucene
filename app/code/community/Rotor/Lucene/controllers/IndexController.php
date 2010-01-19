@@ -16,12 +16,12 @@ class Rotor_Lucene_IndexController extends Mage_Core_Controller_Front_Action
         $this->loadLayout();
         $this->renderLayout();
     }
-/*
+
     public function createIndexAction()
     {
         foreach(Mage::getModel('catalog/category')->getCollection() as $category) {
             $this->_index->indexCategory($category->getId());
         }
     }
- */
+
 }

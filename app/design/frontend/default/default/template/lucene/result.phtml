@@ -34,6 +34,16 @@
     </h3>
     <?php foreach($this->getResults() as $result): ?>
         <div class="search-result">
+            <?php if($result->getImage()): ?>
+                <div class="result-image">
+                    <img
+                        src="<?php echo $result->getImage(); ?>"
+                        alt="<?php echo $result->getName()?>"
+                        title="<?php echo $result->getName()?>"
+                        class="result-image"
+                    />
+                </div>
+            <? endif; ?>
             <h4>
                 <a href="<?php echo $result->getUrl(); ?>">
                     <?php echo $result->getName(); ?>
