@@ -24,13 +24,13 @@ class Rotor_Lucene_Model_Index_Document_Category extends Rotor_Lucene_Model_Inde
     protected function addAttributes()
     {
         $content = strip_tags($this->getStaticBlock($this->getSourceModel()));
-        $this->addField(Zend_Search_Lucene_Field::UnStored('content', $content));
+        $this->addField(Zend_Search_Lucene_Field::UnStored('content', $content, 'UTF-8'));
         $this->addField(Zend_Search_Lucene_Field::Text('name',
-                $this->getSourceModel()->getName()));
+                $this->getSourceModel()->getName(), 'UTF-8'));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content',
-                substr($content, 0, self::SHORT_CONTENT_CHAR_COUNT)));
+                substr($content, 0, self::SHORT_CONTENT_CHAR_COUNT), 'UTF-8'));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('url',
-                $this->getSourceModel()->getUrl()));
+                $this->getSourceModel()->getUrl(), 'UTF-8'));
         if($this->getSourceModel()->getImage()) {
             try {
                 $image = Mage::getModel('catalog/product_image')
@@ -40,7 +40,7 @@ class Rotor_Lucene_Model_Index_Document_Category extends Rotor_Lucene_Model_Inde
                 ->resize()
                 ->saveFile()
                 ->getUrl();
-                $this->addField(Zend_Search_Lucene_Field::UnIndexed('image', $image));
+                $this->addField(Zend_Search_Lucene_Field::UnIndexed('image', $image, 'UTF-8'));
             } catch (Exception $e) {
                 /* no image for category, so none will be added to index */
             }
