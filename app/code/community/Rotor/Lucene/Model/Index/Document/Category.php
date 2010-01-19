@@ -24,7 +24,7 @@ class Rotor_Lucene_Model_Index_Document_Category extends Rotor_Lucene_Model_Inde
     protected function addAttributes()
     {
         $content = strip_tags($this->getStaticBlock($this->getSourceModel()));
-        $this->addField(Zend_Search_Lucene_Field::UnStored('content', $content,));
+        $this->addField(Zend_Search_Lucene_Field::UnStored('content', $content));
         $this->addField(Zend_Search_Lucene_Field::Text('name',
                 $this->getSourceModel()->getName()));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content',
