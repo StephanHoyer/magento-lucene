@@ -29,6 +29,8 @@ class Rotor_Lucene_Model_Index_Document_Category extends Rotor_Lucene_Model_Inde
         $this->addField(Zend_Search_Lucene_Field::UnStored('content', $content, self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::Text('name',
                 $this->getSourceModel()->getName(), self::ENCODING));
+        $this->addField(Zend_Search_Lucene_Field::UnIndexed('parent',
+                $this->getSourceModel()->getParentCategory()->getName(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content',
                 substr($content, 0, self::SHORT_CONTENT_CHAR_COUNT), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('url',

@@ -1,0 +1,20 @@
+<div>
+    <h3><?php echo $this->__('Filter Results'); ?></h3>
+    <ul>
+        <?php foreach($this->getAttributes() as $attribute): ?>
+            <li>
+                <?php echo $this->__($attribute->getTitle()); ?>
+                <ul>
+                    <?php foreach($attribute->getValues() as $value): ?>
+                        <li>
+                            <a href="<?php echo $value->getLink();?>">
+                                <?php echo $this->__($value->getTitle());?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+
+</div>

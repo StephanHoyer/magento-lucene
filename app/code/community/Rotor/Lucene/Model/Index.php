@@ -5,6 +5,9 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 
     var $_query = '';
     var $_results;
+    var $_filters = array();
+    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image', 'name');
+
 
     protected function getDefaultSimilarity()
     {
@@ -41,4 +44,30 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
         }
         return $this->_results;
     }
+
+    public function getResultsFilters()
+    {
+        $this->_filters = array();
+        if($this->getResults())
+        {
+            foreach($this->getResults() as $result) {
+                foreach($result->getData() as $key => $value) {
+                    if(
+                        !in_array($key, $this->_excludeAttributes) &&
+                        $value &&
+                        is_string($value)
+                    ) {
+                        if(!array_key_exists($key, $this->_filters)){
+                            $this->_filters[$key] = Mage::getModel('lucene/filter')
+                                ->setKey($key);
+                        }
+                        $this->_filters[$key]->addValue($value, $result);
+                    }
+                }
+            }
+        }
+        return $this->_filters;
+    }
+
+
 }

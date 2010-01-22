@@ -7,6 +7,9 @@
         </reference>
     </default>
     <lucene_index_index>
+        <reference name="left">
+            <block type="lucene/filter" name="filter" template="lucene/filter.phtml" after="search"/>
+        </reference>
         <reference name="content">
             <block type="lucene/result" name="lucene.result" template="lucene/result.phtml">
                 <block type="lucene/form" name="lucene.form" as="form" template="lucene/form.phtml"/>
