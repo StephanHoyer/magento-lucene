@@ -28,6 +28,15 @@
                 </lucene>
             </updates>
         </layout>
+        <translate>
+            <modules>
+                <Rotor_Lucene>
+                    <files>
+                        <default>Rotor_Lucene.csv</default>
+                    </files>
+                </Rotor_Lucene>
+            </modules>
+        </translate>
     </frontend>
     <global>
         <blocks>
@@ -45,5 +54,25 @@
                 <class>Rotor_Lucene_Model</class>
             </lucene>
         </models>
+        <translate>
+            <modules>
+                <Rotor_Lucene>
+                    <files>
+                        <default>Rotor_Lucene.csv</default>
+                    </files>
+                </Rotor_Lucene>
+            </modules>
+        </translate>
     </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Rotor_Lucene>
+                    <files>
+                        <default>Rotor_Lucene.csv</default>
+                    </files>
+                </Rotor_Lucene>
+            </modules>
+        </translate>
+    </adminhtml>
 </config>

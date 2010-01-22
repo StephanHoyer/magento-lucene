@@ -2,7 +2,7 @@
 <layout version="0.1.0">
     <default>
         <reference name="left">
-            <block type="lucene/form" name="lucene.form" as="form" template="lucene/form.phtml" before="-"/>
+            <block type="lucene/form" name="search" as="form" template="lucene/form.phtml" before="-"/>
             <remove name="top.search"/>
         </reference>
     </default>

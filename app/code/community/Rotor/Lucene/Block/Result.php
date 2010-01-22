@@ -8,16 +8,16 @@ class Rotor_Lucene_Block_Result extends Mage_Core_Block_Template
 
     public function getResults()
     {
-        return Mage::registry('search_index')->getResults();
+        return Mage::getSingleton('lucene/index')->getResults();
     }
 
     public function getResultCount()
     {
-        return count(Mage::registry('search_index')->getResults());
+        return count(Mage::getSingleton('lucene/index')->getResults());
     }
 
     public function getEscapedQueryText()
     {
-        return strip_tags(Mage::registry('search_index')->getQuery());
+        return strip_tags(Mage::getSingleton('lucene/index')->getQuery());
     }
 }
