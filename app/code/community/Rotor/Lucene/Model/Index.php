@@ -85,7 +85,8 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
                     if(
                         !in_array($key, $this->_excludeAttributes) &&
                         $value &&
-                        is_string($value)
+                        is_string($value) &&
+                        $this->isCurrentlyFiltered($key)
                     ) {
                         if(!array_key_exists($key, $this->_resultsFilters)){
                             $this->_resultsFilters[$key] = Mage::getModel('lucene/filter')
@@ -97,6 +98,11 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
             }
         }
         return $this->_resultsFilters;
+    }
+
+    protected function isCurrentlyFiltered($key)
+    {
+        return !array_key_exists($key, $this->getCurrentFilters());
     }
 
     public function getCurrentFilters()
