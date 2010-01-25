@@ -62,7 +62,9 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 
     public function getQueryString()
     {
-        return $this->_currentFilters[self::QUERY_KEY]->getValue();
+        if(array_key_exists(self::QUERY_KEY, $this->_currentFilters)) {
+            return $this->_currentFilters[self::QUERY_KEY]->getValue();
+        }
     }
 
     public function getResults()
