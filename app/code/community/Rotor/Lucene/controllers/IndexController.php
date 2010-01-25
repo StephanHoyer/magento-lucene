@@ -8,7 +8,7 @@ class Rotor_Lucene_IndexController extends Mage_Core_Controller_Front_Action
     {
         $index = Mage::getSingleton('lucene/index');
         foreach($this->getRequest()->getParams() as $key=>$value) {
-            $index->addFilter($key, $value);
+            $index->addFilter(urldecode($key), urldecode($value));
         }
         $this->loadLayout();
         $this->renderLayout();
