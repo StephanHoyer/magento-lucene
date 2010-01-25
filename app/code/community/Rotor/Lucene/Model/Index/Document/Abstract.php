@@ -1,7 +1,7 @@
 <?php
 abstract class Rotor_Lucene_Model_Index_Document_Abstract extends Varien_Object
 {
-    const ENCODING = '';
+    const ENCODING = 'utf8';
 
     protected $_id;
     protected $_entityModel;
