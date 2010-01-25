@@ -4,8 +4,6 @@ class Rotor_Lucene_Model_Index_Document_Category extends Rotor_Lucene_Model_Inde
     const DOCTYPE = 'category';
     const SHORT_CONTENT_CHAR_COUNT = 1000;
 
-    const ENCODING = '';
-
     protected function getEntityCollection()
     {
         return Mage::getModel('catalog/category')
