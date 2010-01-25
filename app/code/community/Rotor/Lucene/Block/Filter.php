@@ -11,7 +11,7 @@ class Rotor_Lucene_Block_Filter extends Mage_Core_Block_Template
         return $this->_index;
     }
 
-    public function getAttributes()
+    public function getPossibleFilters()
     {
         return $this->getIndex()->getResultsFilters();
     }
