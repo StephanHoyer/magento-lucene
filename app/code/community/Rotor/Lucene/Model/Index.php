@@ -2,10 +2,12 @@
 class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 {
     const INDEX_DIR = 'var/lucene/index';
+    const QUERY_KEY = 'q';
 
-    var $_query = '';
+    var $_currentFilters = array();
     var $_results;
-    var $_filters = array();
+    var $_query;
+    var $_resultsFilters = array();
     var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image', 'name');
 
 
@@ -26,19 +28,48 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 
     public function setQuery($query)
     {
-        $this->_query = $query;
+        $this->_currentFilters[self::QUERY_KEY] = $query;
+    }
+
+    public function addFilter($key, $value)
+    {
+        $this->_currentFilters[$key] = Mage::getModel('lucene/filter_value')
+            ->setValue($value)
+            ->setKey($key);;
     }
 
     public function getQuery()
     {
+        if(!isset($this->_query)) {
+            $this->_query = new Zend_Search_Lucene_Search_Query_MultiTerm();
+            foreach($this->getCurrentFilters() as $filter) {
+                if($filter->getKey() == self::QUERY_KEY) {
+                    $this->_query->addTerm(
+                        new Zend_Search_Lucene_Index_Term(
+                            $filter->getValue()
+                        ), true);
+                } else {
+                    $this->_query->addTerm(
+                        new Zend_Search_Lucene_Index_Term(
+                            $filter->getValue(),
+                            $filter->getKey()
+                        ), true);
+                }
+            }
+        }
         return $this->_query;
+    }
+
+    public function getQueryString()
+    {
+        return $this->_currentFilters[self::QUERY_KEY]->getValue();
     }
 
     public function getResults()
     {
         if(!isset($this->_results)) {
             $this->_results = array();
-            foreach($this->find($this->_query.'~'.$this->getDefaultSimilarity()) as $hit) {
+            foreach($this->find($this->getQuery()) as $hit) {
                 $this->_results[] = new Rotor_Lucene_Model_Index_Document($hit);
             }
         }
@@ -47,7 +78,6 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 
     public function getResultsFilters()
     {
-        $this->_filters = array();
         if($this->getResults())
         {
             foreach($this->getResults() as $result) {
@@ -57,17 +87,28 @@ class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
                         $value &&
                         is_string($value)
                     ) {
-                        if(!array_key_exists($key, $this->_filters)){
-                            $this->_filters[$key] = Mage::getModel('lucene/filter')
+                        if(!array_key_exists($key, $this->_resultsFilters)){
+                            $this->_resultsFilters[$key] = Mage::getModel('lucene/filter')
                                 ->setKey($key);
                         }
-                        $this->_filters[$key]->addValue($value, $result);
+                        $this->_resultsFilters[$key]->addValue($value, $result);
                     }
                 }
             }
         }
-        return $this->_filters;
+        return $this->_resultsFilters;
     }
 
+    public function getCurrentFilters()
+    {
+        return $this->_currentFilters;
+    }
+
+    public function getCurrentFiltersWOQuery()
+    {
+        $filters = $this->_currentFilters;
+        unset($filters[self::QUERY_KEY]);
+        return $filters;
+    }
 
 }

@@ -18,6 +18,6 @@ class Rotor_Lucene_Block_Result extends Mage_Core_Block_Template
 
     public function getEscapedQueryText()
     {
-        return strip_tags(Mage::getSingleton('lucene/index')->getQuery());
+        return strip_tags(Mage::getSingleton('lucene/index')->getQueryString());
     }
 }

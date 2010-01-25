@@ -1,4 +1,15 @@
 <div>
+    <h3><?php echo $this->__('Current Filters'); ?></h3>
+    <ul>
+        <?php foreach($this->getCurrentFilters() as $filter): ?>
+            <li>
+                <a href="<?php echo $this->getRemoveFilterUrl($filter); ?>">
+                    X
+                </a>
+                <?php echo $this->__($filter->getKey()).": ".$this->__($filter->getValue()); ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
     <h3><?php echo $this->__('Filter Results'); ?></h3>
     <ul>
         <?php foreach($this->getAttributes() as $attribute): ?>
@@ -7,7 +18,7 @@
                 <ul>
                     <?php foreach($attribute->getValues() as $value): ?>
                         <li>
-                            <a href="<?php echo $value->getLink();?>">
+                            <a href="<?php echo $this->getFilterUrl($value); ?>">
                                 <?php echo $this->__($value->getTitle());?>
                             </a>
                         </li>

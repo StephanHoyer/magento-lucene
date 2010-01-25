@@ -14,7 +14,8 @@ class Rotor_Lucene_Model_Filter extends Varien_Object
     {
         if(!array_key_exists($value, $this->_values)) {
             $this->_values[$value] = Mage::getModel('lucene/filter_value')
-                ->setValue($value);
+                ->setValue($value)
+                ->setKey($this->_key);
         }
         $this->_values[$value]->addDocument($document);
         return $this;
