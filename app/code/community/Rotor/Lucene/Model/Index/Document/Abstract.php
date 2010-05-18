@@ -1,7 +1,7 @@
 <?php
 abstract class Rotor_Lucene_Model_Index_Document_Abstract extends Varien_Object
 {
-    const ENCODING = 'utf8';
+    const ENCODING = 'UTF-8';
 
     protected $_id;
     protected $_entityModel;
@@ -19,14 +19,15 @@ abstract class Rotor_Lucene_Model_Index_Document_Abstract extends Varien_Object
     {
         $this->_id = $id;
         $this->delete();
-        $this->addField(Zend_Search_Lucene_Field::Keyword('doctype','category'));
+        $this->addField(Zend_Search_Lucene_Field::Keyword('doctype',$this->getDoctype()));
         $this->addField(Zend_Search_Lucene_Field::Keyword('entity_id',
             $this->getSourceModel()->getId()));
         $this->addAttributes();
         $this->addDocument();
     }
 
-    protected function delete() {
+    protected function delete() 
+    {
         $query = new Zend_Search_Lucene_Search_Query_MultiTerm();
         $query->addTerm(new Zend_Search_Lucene_Index_Term($this->_id, 'entity_id'),true);
         $query->addTerm(new Zend_Search_Lucene_Index_Term($this->getDoctype(), 'doctype'),true);
@@ -55,6 +56,11 @@ abstract class Rotor_Lucene_Model_Index_Document_Abstract extends Varien_Object
         }
         $this->_doc->addField($field);
     }
+
+	protected function getField($fieldName)
+	{
+		return $this->_doc->getField($fieldName);
+	}
 
     protected function addDocument()
     {

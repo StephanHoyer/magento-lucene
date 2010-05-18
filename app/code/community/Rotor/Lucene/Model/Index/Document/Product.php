@@ -1,5 +1,6 @@
 <?php
-class Rotor_Lucene_Model_Index_Document_Product extends Rotor_Lucene_Model_Index_Document_Abstract
+class Rotor_Lucene_Model_Index_Document_Product 
+	extends Rotor_Lucene_Model_Index_Document_Abstract
 {
     const DOCTYPE = 'product';
 
@@ -9,9 +10,10 @@ class Rotor_Lucene_Model_Index_Document_Product extends Rotor_Lucene_Model_Index
     {
         $collection = Mage::getModel('catalog/product')
 			->getCollection();
-        Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);
-        Mage::getSingleton('catalog/product_visibility')->addVisibleInSearchFilterToCollection($collection);
-		$collection->addAttributeToFilter('entity_id', array('gt' => 9700));
+        Mage::getSingleton('catalog/product_status')
+			->addVisibleFilterToCollection($collection);
+        Mage::getSingleton('catalog/product_visibility')
+			->addVisibleInSearchFilterToCollection($collection);
 		return $collection;
     }
 
@@ -29,31 +31,13 @@ class Rotor_Lucene_Model_Index_Document_Product extends Rotor_Lucene_Model_Index
     {
         $this->addField(Zend_Search_Lucene_Field::Text('name',
                 $this->getSourceModel()->getName(), self::ENCODING));
-/*
-		$this->addField(Zend_Search_Lucene_Field::UnStored('content', 
-			$this->getSourceModel()->getDescription(), self::ENCODING));
-        $this->addField(Zend_Search_Lucene_Field::Keyword('category',
-            $this->getSourceModel()->getParentCategory()->getName(), self::ENCODING));
-*/      
 		$this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content', 
 			$this->getSourceModel()->getShortDescription(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('url',
         	$this->getSourceModel()->getUrl(), self::ENCODING));
-		foreach($this->getSearchableAttributes() as $attribute) {
-			if(in_array($attribute->getAttributeCode(), $this->_systemAttributes)) {
-				continue;
-			}
-			if($this->getSourceModel()->getData($attribute->getAttributeCode())) {
-				$value = $this->getSourceModel()->getAttributeText($attribute->getAttributeCode());
-				if(!$value) {
-					$value = $this->getSourceModel()->getData($attribute->getAttributeCode());
-				}
-				Mage::log($attribute->getAttributeCode().":".$value);
-		        $this->addField(Zend_Search_Lucene_Field::UnStored($attribute->getAttributeCode(),
-		        	$value, self::ENCODING));
-			}
-			
-		}
+		$this->addSearchableAttributes();
+		$this->addFilterableAttributes();
+		
         /*
 		if($this->getSourceModel()->getImage()) {
             try {
@@ -71,6 +55,61 @@ class Rotor_Lucene_Model_Index_Document_Product extends Rotor_Lucene_Model_Index
         }
 		*/
     }
+
+	protected function addFilterableAttributes()
+	{
+		foreach($this->getFilterableAttributes() as $attribute) {
+			if(in_array(
+				$attribute->getAttributeCode(), 
+				$this->_systemAttributes
+			)) {
+				continue;
+			}
+			if($this->getSourceModel()->getData($attribute->getAttributeCode())) {
+				$value = $this->getSourceModel()
+					->getAttributeText($attribute->getAttributeCode());
+				if(!$value) {
+					$value = $this->getSourceModel()
+						->getData($attribute->getAttributeCode());
+				}
+				try {
+					$this->getField($attribute->getAttributeCode())->isStored = true;
+					$this->getField($attribute->getAttributeCode())->isIndexed = true;
+				} catch(Zend_Search_Lucene_Exception $e) {
+			        $this->addField(Zend_Search_Lucene_Field::Keyword(
+						$attribute->getAttributeCode(),
+			        	$value, self::ENCODING)
+					);
+				}
+			}
+		}
+	}
+
+	protected function addSearchableAttributes()
+	{
+		foreach($this->getSearchableAttributes() as $attribute) {
+			if(in_array($attribute->getAttributeCode(), $this->_systemAttributes)) {
+				continue;
+			}
+			if($this->getSourceModel()->getData($attribute->getAttributeCode())) {
+				$value = $this->getSourceModel()
+					->getAttributeText($attribute->getAttributeCode());
+				if(!$value) {
+					$value = $this->getSourceModel()
+						->getData($attribute->getAttributeCode());
+				}
+				try {
+					$this->getField($attribute->getAttributeCode())->isTokenized = true;
+					$this->getField($attribute->getAttributeCode())->isIndexed = true;
+				} catch(Zend_Search_Lucene_Exception $e) {
+			        $this->addField(Zend_Search_Lucene_Field::UnStored(
+						$attribute->getAttributeCode(),
+			        	$value, self::ENCODING)
+					);
+				}
+			}
+		}
+	}
 
     protected function getSourceModel()
     {
@@ -93,4 +132,17 @@ class Rotor_Lucene_Model_Index_Document_Product extends Rotor_Lucene_Model_Index
 		}
 		return $this->_searchableAttributes;
 	}
+
+	protected function getFilterableAttributes()
+	{
+		if(!isset($this->_searchableAttributes)) {
+			$this->_searchableAttributes = Mage::getModel('eav/entity_attribute')
+				->getCollection()
+				->setEntityTypeFilter($this->getSourceModel()->getEntityTypeId());
+			$this->_searchableAttributes->getSelect()
+				->where('additional_table.is_filterable_in_search = ?', 1);
+		}
+		return $this->_searchableAttributes;
+	}
+
 }

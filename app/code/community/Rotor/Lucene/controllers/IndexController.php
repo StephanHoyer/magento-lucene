@@ -17,6 +17,7 @@ class Rotor_Lucene_IndexController extends Mage_Core_Controller_Front_Action
     public function createIndexAction()
     {
         Mage::getSingleton('lucene/index_document_category')->indexAll();
+//        Mage::getSingleton('lucene/index_document_product')->indexAll();
     }
 
 }
