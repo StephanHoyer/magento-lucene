@@ -1,5 +1,5 @@
 <?php
-class Rotor_Lucene_Model_Filter_Value extends Varien_Object
+class Mage_Lucene_Model_Filter_Value extends Varien_Object
 {
     var $_value;
     var $_key;

@@ -1,6 +1,6 @@
 <?php
 
-class Rotor_Lucene_IndexController extends Mage_Core_Controller_Front_Action
+class Mage_Lucene_IndexController extends Mage_Core_Controller_Front_Action
 {
     var $_index;
     

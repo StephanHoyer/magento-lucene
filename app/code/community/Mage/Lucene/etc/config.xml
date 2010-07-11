@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 	<!--
-		/** * @category Netresearch * @package Rotor_Lucene *
+		/** * @category Netresearch * @package Mage_Lucene *
 		@author ModuleCreator * @license
 		http://opensource.org/licenses/osl-3.0.php Open Software License (OSL
 		3.0) */
 	-->
 <config>
     <modules>
-        <Rotor_Lucene>
+        <Mage_Lucene>
             <version>0.1.0</version>
-        </Rotor_Lucene>
+        </Mage_Lucene>
     </modules>
     <frontend>
         <routers>
             <lucene>
                 <use>standard</use>
                 <args>
-                    <module>Rotor_Lucene</module>
+                    <module>Mage_Lucene</module>
                     <frontName>search</frontName>
                 </args>
             </lucene>
@@ -30,48 +30,48 @@
         </layout>
         <translate>
             <modules>
-                <Rotor_Lucene>
+                <Mage_Lucene>
                     <files>
-                        <default>Rotor_Lucene.csv</default>
+                        <default>Mage_Lucene.csv</default>
                     </files>
-                </Rotor_Lucene>
+                </Mage_Lucene>
             </modules>
         </translate>
     </frontend>
     <global>
         <blocks>
             <lucene>
-                <class>Rotor_Lucene_Block</class>
+                <class>Mage_Lucene_Block</class>
             </lucene>
         </blocks>
         <helpers>
             <lucene>
-                <class>Rotor_Lucene_Helper</class>
+                <class>Mage_Lucene_Helper</class>
             </lucene>
         </helpers>
         <models>
             <lucene>
-                <class>Rotor_Lucene_Model</class>
+                <class>Mage_Lucene_Model</class>
             </lucene>
         </models>
         <translate>
             <modules>
-                <Rotor_Lucene>
+                <Mage_Lucene>
                     <files>
-                        <default>Rotor_Lucene.csv</default>
+                        <default>Mage_Lucene.csv</default>
                     </files>
-                </Rotor_Lucene>
+                </Mage_Lucene>
             </modules>
         </translate>
     </global>
     <adminhtml>
         <translate>
             <modules>
-                <Rotor_Lucene>
+                <Mage_Lucene>
                     <files>
-                        <default>Rotor_Lucene.csv</default>
+                        <default>Mage_Lucene.csv</default>
                     </files>
-                </Rotor_Lucene>
+                </Mage_Lucene>
             </modules>
         </translate>
     </adminhtml>

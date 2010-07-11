@@ -1,5 +1,5 @@
 <?php
-class Rotor_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
+class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 {
     const INDEX_DIR = 'var/lucene/index';
     const QUERY_KEY = 'q';

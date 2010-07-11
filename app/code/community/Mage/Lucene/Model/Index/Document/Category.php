@@ -1,5 +1,5 @@
 <?php
-class Rotor_Lucene_Model_Index_Document_Category extends Rotor_Lucene_Model_Index_Document_Abstract
+class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_Document_Abstract
 {
     const DOCTYPE = 'category';
     const SHORT_CONTENT_CHAR_COUNT = 1000;

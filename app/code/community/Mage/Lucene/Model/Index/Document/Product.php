@@ -1,6 +1,6 @@
 <?php
-class Rotor_Lucene_Model_Index_Document_Product 
-	extends Rotor_Lucene_Model_Index_Document_Abstract
+class Mage_Lucene_Model_Index_Document_Product 
+	extends Mage_Lucene_Model_Index_Document_Abstract
 {
     const DOCTYPE = 'product';
 

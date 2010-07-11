@@ -1,5 +1,5 @@
 <?php
-class Rotor_Lucene_Block_Filter extends Mage_Core_Block_Template
+class Mage_Lucene_Block_Filter extends Mage_Core_Block_Template
 {
     protected $_index;
 
