@@ -72,7 +72,7 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
         if(!isset($this->_results)) {
             $this->_results = array();
             foreach($this->find($this->getQuery()) as $hit) {
-                $this->_results[] = new Rotor_Lucene_Model_Index_Document($hit);
+                $this->_results[] = new Mage_Lucene_Model_Index_Document($hit);
             }
         }
         return $this->_results;

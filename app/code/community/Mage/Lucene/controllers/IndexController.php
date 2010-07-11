@@ -1,9 +1,9 @@
 <?php
-
 class Mage_Lucene_IndexController extends Mage_Core_Controller_Front_Action
 {
-    var $_index;
-    
+    /**
+     * Action to run search query.
+     **/
     public function indexAction()
     {
         $index = Mage::getSingleton('lucene/index');
@@ -14,6 +14,9 @@ class Mage_Lucene_IndexController extends Mage_Core_Controller_Front_Action
         $this->renderLayout();
     }
 
+    /**
+     * Action to run index create.
+     **/
     public function createIndexAction()
     {
         Mage::getSingleton('lucene/index_document_category')->indexAll();

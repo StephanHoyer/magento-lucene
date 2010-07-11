@@ -4,6 +4,11 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
     const DOCTYPE = 'category';
     const SHORT_CONTENT_CHAR_COUNT = 1000;
 
+    /**
+     * Returns collection of all active categories.
+     *
+     * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection
+     **/
     protected function getEntityCollection()
     {
         return Mage::getModel('catalog/category')
@@ -11,16 +16,31 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
             ->addIsActiveFilter();
     }
 
+    /**
+     * Returns instance of this class.
+     *
+     * @return Mage_Lucene_Model_Index_Document_Category
+     **/
     protected function getEntitySearchModel()
     {
         return Mage::getModel('lucene/index_document_category');
     }
 
+    /**
+     * Returns String representation of this class' object type.
+     *
+     * @return String
+     **/
     protected function getDoctype()
     {
         return self::DOCTYPE;
     }
 
+    /**
+     * Adds all values of related category to the search document.
+     *
+     * @return void
+     **/
     protected function addAttributes()
     {
         $content = strip_tags($this->getStaticBlock($this->getSourceModel()));
@@ -49,6 +69,11 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
         }
     }
 
+    /**
+     * Returns category related to this search document.
+     *
+     * @return Mage_Catalog_Model_Category
+     **/
     protected function getSourceModel()
     {
         if(!isset($this->_entityModel)) {
@@ -59,6 +84,11 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
         return $this->_entityModel;
     }
 
+    /**
+     * Returns HTML content of static block of this category.
+     *
+     * @return String
+     **/
     protected function getStaticBlock($category)
     {
         return Mage::app()->getLayout()->createBlock('cms/block')
