@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <config>
     <modules>
-        <Rotor_Lucene>
+        <Mage_Lucene>
             <active>true</active>
             <codePool>community</codePool>
-        </Rotor_Lucene>
+        </Mage_Lucene>
     </modules>
 </config>
