@@ -13,14 +13,4 @@ class Mage_Lucene_IndexController extends Mage_Core_Controller_Front_Action
         $this->loadLayout();
         $this->renderLayout();
     }
-
-    /**
-     * Action to run index create.
-     **/
-    public function createIndexAction()
-    {
-        Mage::getSingleton('lucene/index_document_category')->indexAll();
-//        Mage::getSingleton('lucene/index_document_product')->indexAll();
-    }
-
 }
