@@ -10,7 +10,6 @@ class Mage_Lucene_Model_Index_Document_Product
     {
         $collection = Mage::getModel('catalog/product')
             ->getCollection()
-			->addStoreFilter(1)
 			->addAttributeToSelect('status', 1)
 	        ->setVisibility(Mage::getModel('catalog/product_visibility')->getVisibleInSearchIds());
         return $collection;
@@ -28,6 +27,7 @@ class Mage_Lucene_Model_Index_Document_Product
 
     protected function addAttributes()
     {
+		Mage::log($this->getSourceModel()->getId());
         $this->addField(Zend_Search_Lucene_Field::Text('name',
                 $this->getSourceModel()->getName(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content', 
@@ -97,7 +97,7 @@ class Mage_Lucene_Model_Index_Document_Product
     {
         if(!isset($this->_entityModel)) {
             $this->_entityModel = Mage::getModel('catalog/product')
-                ->setStoreId(Mage::app()->getStore()->getId())
+                ->setStoreId($this->getStore()->getId())
                 ->load($this->_id);
         }
         return $this->_entityModel;

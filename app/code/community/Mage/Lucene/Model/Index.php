@@ -42,6 +42,7 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     {
         if(!isset($this->_query)) {
             $this->_query = new Zend_Search_Lucene_Search_Query_MultiTerm();
+	        $this->_query->addTerm(new Zend_Search_Lucene_Index_Term(Mage::app()->getStore()->getId(), 'store'),true);
             foreach($this->getCurrentFilters() as $filter) {
                 if($filter->getKey() == self::QUERY_KEY) {
                     $this->_query->addTerm(

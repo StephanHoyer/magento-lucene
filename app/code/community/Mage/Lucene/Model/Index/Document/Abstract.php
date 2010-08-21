@@ -27,15 +27,33 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     protected $_doc;
     
     /**
+     * @var Mage_Core_Model_Store
+     **/
+    protected $_store;
+    
+    /**
      * Indexes all given documents.
      * 
      * @return Mage_Lucene_Model_Index_Document_Abstract
      **/
     public function indexAll()
     {
-        foreach($this->getEntityCollection() as $entity) {
-            $this->getEntitySearchModel()->index($entity->getId());
-        }
+		foreach(Mage::getModel('core/store')->getCollection() as $store) {
+			if($store->getId() == 0) {
+				continue;
+			};
+			$this->_store = $store;
+			$collection = clone $this->getEntityCollection();
+			$collection->addStoreFilter($this->getStore());
+			foreach($collection as $entity) {
+				try {
+					Mage::log($entity->getId());
+		            $this->getEntitySearchModel()->index($entity->getId());
+				} catch(Exception $e) {
+					Mage::log($e->getMessage());
+				}
+	        }
+		}
         return $this;
     }
 
@@ -53,6 +71,8 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
         $this->addField(Zend_Search_Lucene_Field::Keyword('doctype',$this->getDoctype()));
         $this->addField(Zend_Search_Lucene_Field::Keyword('entity_id',
             $this->getSourceModel()->getId()));
+        $this->addField(Zend_Search_Lucene_Field::Keyword('store',
+            $this->getStore()->getId()));
         $this->addAttributes();
         $this->addDocument();
         return $this;
@@ -68,6 +88,7 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
         $query = new Zend_Search_Lucene_Search_Query_MultiTerm();
         $query->addTerm(new Zend_Search_Lucene_Index_Term($this->_id, 'entity_id'),true);
         $query->addTerm(new Zend_Search_Lucene_Index_Term($this->getDoctype(), 'doctype'),true);
+        $query->addTerm(new Zend_Search_Lucene_Index_Term($this->getStore()->getId(), 'store'),true);
         $this->deleteByQuery($query);
         return $this;
     }
@@ -125,6 +146,16 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     protected function getField($fieldName)
     {
         return $this->_doc->getField($fieldName);
+    }
+
+    /**
+     * Returns current indexed store.
+     *
+     * @return Mage_Core_Model_Store
+     **/
+    protected function getStore()
+    {
+        return $this->_store;
     }
 
     /**
