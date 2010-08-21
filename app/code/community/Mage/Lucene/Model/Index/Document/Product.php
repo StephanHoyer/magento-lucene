@@ -9,11 +9,10 @@ class Mage_Lucene_Model_Index_Document_Product
     protected function getEntityCollection()
     {
         $collection = Mage::getModel('catalog/product')
-            ->getCollection();
-        Mage::getSingleton('catalog/product_status')
-            ->addVisibleFilterToCollection($collection);
-        Mage::getSingleton('catalog/product_visibility')
-            ->addVisibleInSearchFilterToCollection($collection);
+            ->getCollection()
+			->addStoreFilter(1)
+			->addAttributeToSelect('status', 1)
+	        ->setVisibility(Mage::getModel('catalog/product_visibility')->getVisibleInSearchIds());
         return $collection;
     }
 
@@ -34,26 +33,9 @@ class Mage_Lucene_Model_Index_Document_Product
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content', 
             $this->getSourceModel()->getShortDescription(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('url',
-            $this->getSourceModel()->getUrl(), self::ENCODING));
+            $this->getSourceModel()->getProductUrl(), self::ENCODING));
         $this->addSearchableAttributes();
         $this->addFilterableAttributes();
-        
-        /*
-        if($this->getSourceModel()->getImage()) {
-            try {
-                $image = Mage::getModel('catalog/product_image')
-                ->setBaseFile('../category/'.$this->getSourceModel()->getImage())
-                ->setHeight(100)
-                ->setWidth(100)
-                ->resize()
-                ->saveFile()
-                ->getUrl();
-                $this->addField(Zend_Search_Lucene_Field::UnIndexed('image', $image, self::ENCODING));
-            } catch (Exception $e) {
-                // no image for category, so none will be added to index
-            }
-        }
-        */
     }
 
     protected function addFilterableAttributes()

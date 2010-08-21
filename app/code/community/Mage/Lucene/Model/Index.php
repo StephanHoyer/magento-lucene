@@ -46,7 +46,7 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
                 if($filter->getKey() == self::QUERY_KEY) {
                     $this->_query->addTerm(
                         new Zend_Search_Lucene_Index_Term(
-                            strtolower($filter->getValue())//.'~'.$this->getDefaultSimilarity()
+                            strtolower($filter->getValue())
                         ), true);
                 } else {
                     $this->_query->addTerm(
