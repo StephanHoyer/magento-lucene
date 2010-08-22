@@ -6,13 +6,44 @@ class Mage_Lucene_Model_Index_Document_Product
 
     protected $_systemAttributes = array('name', 'short_content', 'url');
 
-    protected function getEntityCollection()
+    /**
+     * Returns collection of all searchable products
+     *
+     * return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
+     */
+	protected function getProductCollection()
     {
-        $collection = Mage::getModel('catalog/product')
+        return Mage::getModel('catalog/product')
             ->getCollection()
-			->addAttributeToSelect('status', 1)
-	        ->setVisibility(Mage::getModel('catalog/product_visibility')->getVisibleInSearchIds());
-        return $collection;
+            ->setVisibility(Mage::getModel('catalog/product_visibility')->getVisibleInSearchIds())
+            ->addAttributeToSelect($this->getSearchableAttributesCodes(), true)
+            ->addAttributeToSelect($this->getFilterableAttributesCodes(), true);
+    }
+
+    /**
+     * Indexes all products for all storeviews.
+     * 
+     * @return Mage_Lucene_Model_Index_Document_Abstract
+     **/
+    public function indexAll()
+    {
+        foreach(Mage::getModel('core/store')->getCollection() as $store) {
+            /* Don't index admin */
+            if($store->getId() == 0) {
+                continue;
+            };
+            $this->setStore($store);
+            $collection = $this
+                ->getProductCollection()
+                ->addStoreFilter($store)
+            foreach($collection as $entity) {
+				Mage::log($entity->getData());
+                $this->getEntitySearchModel()
+                    ->setStore($store)
+                    ->index($entity);
+            }
+        }
+        return $this;
     }
 
     protected function getEntitySearchModel()
@@ -27,7 +58,6 @@ class Mage_Lucene_Model_Index_Document_Product
 
     protected function addAttributes()
     {
-		Mage::log($this->getSourceModel()->getId());
         $this->addField(Zend_Search_Lucene_Field::Text('name',
                 $this->getSourceModel()->getName(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content', 
@@ -108,23 +138,62 @@ class Mage_Lucene_Model_Index_Document_Product
         if(!isset($this->_searchableAttributes)) {
             $this->_searchableAttributes = Mage::getModel('eav/entity_attribute')
                 ->getCollection()
-                ->setEntityTypeFilter($this->getSourceModel()->getEntityTypeId());
+                ->setEntityTypeFilter($this->getProductEntityTypeId());
             $this->_searchableAttributes->getSelect()
                 ->where('additional_table.is_searchable = ?', 1);
         }
         return $this->_searchableAttributes;
     }
 
+    /**
+     * Returns array of codes of all searchable products attributes
+     *
+     * @return array
+     **/
+    protected function getSearchableAttributesCodes()
+    {
+        $return = array();
+        foreach($this->getSearchableAttributes() as $attribute) {
+            $return[] = $attribute->getAttributeCode();
+        }
+        return $return;
+    }    
+
     protected function getFilterableAttributes()
     {
         if(!isset($this->_searchableAttributes)) {
             $this->_searchableAttributes = Mage::getModel('eav/entity_attribute')
                 ->getCollection()
-                ->setEntityTypeFilter($this->getSourceModel()->getEntityTypeId());
+                ->setEntityTypeFilter($this->getProductEntityTypeId());
             $this->_searchableAttributes->getSelect()
                 ->where('additional_table.is_filterable_in_search = ?', 1);
         }
         return $this->_searchableAttributes;
     }
 
+    /**
+     * Returns array of codes of all filterable products attributes
+     *
+     * @return array
+     **/
+    protected function getFilterableAttributesCodes()
+    {
+        $return = array();
+        foreach($this->getFilterableAttributes() as $attribute) {
+            $return[] = $attribute->getAttributeCode();
+        }
+        return $return;
+    }    
+
+    /**
+     * Returns typeId of product model
+     * 
+     * @return int
+     **/
+    protected function getProductEntityTypeId()
+    {
+        return Mage::getModel('eav/entity_type')
+            ->loadByCode(Mage_Catalog_Model_Product::ENTITY)
+            ->getEntityTypeId();
+    }
 }

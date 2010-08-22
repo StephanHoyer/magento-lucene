@@ -14,7 +14,7 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     /**
      * @var Varien_Object Document related entity
      **/
-    protected $_entityModel;
+    protected $_sourceModel;
 
     /**
      * @var Mage_Lucene_Model_Index Search index
@@ -32,45 +32,19 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     protected $_store;
     
     /**
-     * Indexes all given documents.
-     * 
-     * @return Mage_Lucene_Model_Index_Document_Abstract
-     **/
-    public function indexAll()
-    {
-		foreach(Mage::getModel('core/store')->getCollection() as $store) {
-			if($store->getId() == 0) {
-				continue;
-			};
-			$this->_store = $store;
-			$collection = clone $this->getEntityCollection();
-			$collection->addStoreFilter($this->getStore());
-			foreach($collection as $entity) {
-				try {
-					Mage::log($entity->getId());
-		            $this->getEntitySearchModel()->index($entity->getId());
-				} catch(Exception $e) {
-					Mage::log($e->getMessage());
-				}
-	        }
-		}
-        return $this;
-    }
-
-    /**
      * Index entity of document with given id.
      * 
-     * @param int id
+     * @param Mage_Core_Model_Abstract
      *
      * @return Mage_Lucene_Model_Index_Document_Abstract
      **/
-    public function index($id)
+    public function index($sourceModel)
     {
-        $this->_id = $id;
+		$this->_sourceModel = $sourceModel;
+        $this->_id = $sourceModel->getId();
         $this->delete();
         $this->addField(Zend_Search_Lucene_Field::Keyword('doctype',$this->getDoctype()));
-        $this->addField(Zend_Search_Lucene_Field::Keyword('entity_id',
-            $this->getSourceModel()->getId()));
+        $this->addField(Zend_Search_Lucene_Field::Keyword('entity_id', $this->_id));
         $this->addField(Zend_Search_Lucene_Field::Keyword('store',
             $this->getStore()->getId()));
         $this->addAttributes();
@@ -159,6 +133,17 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     }
 
     /**
+     * Sets store to index.
+     *
+     * @return Mage_Lucene_Model_Index_Document_Abstract
+     **/
+    protected function setStore($store)
+    {
+        $this->_store = $store;
+		return $this;
+    }
+
+    /**
      * Adds this document to search index.
      *
      * @return void
@@ -169,11 +154,11 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     }
 
     /**
-     * Function to retrive all entities of given collection.
+     * Index all documents of this type
      *
-     * @return Mage_Core_Model_Mysql4_Collection_Abstract
+     * @return Mage_Lucene_Model_Index_Document_Abstract
      **/
-    protected abstract function getEntityCollection();
+    protected abstract function indexAll();
 
     /**
      * Function to get an instance of this object
@@ -201,5 +186,8 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
      *
      * @return Varien_Object
      **/
-    protected abstract function getSourceModel();
+    protected function getSourceModel()
+	{
+		return $this->_sourceModel;
+	}
 }
