@@ -11,7 +11,7 @@ class Mage_Lucene_Model_Index_Document_Product
      *
      * return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
      */
-	protected function getProductCollection()
+    protected function getProductCollection()
     {
         return Mage::getModel('catalog/product')
             ->getCollection()
@@ -37,7 +37,6 @@ class Mage_Lucene_Model_Index_Document_Product
                 ->getProductCollection()
                 ->addStoreFilter($store)
             foreach($collection as $entity) {
-				Mage::log($entity->getData());
                 $this->getEntitySearchModel()
                     ->setStore($store)
                     ->index($entity);
@@ -46,20 +45,35 @@ class Mage_Lucene_Model_Index_Document_Product
         return $this;
     }
 
+    /**
+     * Returns instance of this class
+     * 
+     * @return Mage_Lucene_Model_Index_Document_Product
+     **/
     protected function getEntitySearchModel()
     {
         return Mage::getModel('lucene/index_document_product');
     }
 
+    /**
+     * Returns string representation of document type
+     * 
+     * @return string
+     **/
     protected function getDoctype()
     {
         return self::DOCTYPE;
     }
 
-    protected function addAttributes()
+    /**
+     * Adds attributes to be indexed
+     * 
+     * @return string
+     **/
+    protected function addAttributes($sourceModel)
     {
         $this->addField(Zend_Search_Lucene_Field::Text('name',
-                $this->getSourceModel()->getName(), self::ENCODING));
+            $this->getSourceModel()->getName(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('short_content', 
             $this->getSourceModel()->getShortDescription(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('url',
@@ -68,13 +82,15 @@ class Mage_Lucene_Model_Index_Document_Product
         $this->addFilterableAttributes();
     }
 
+    /**
+     * Add filterable attributes and values to indexed document
+     * 
+     * @return string
+     **/
     protected function addFilterableAttributes()
     {
         foreach($this->getFilterableAttributes() as $attribute) {
-            if(in_array(
-                $attribute->getAttributeCode(), 
-                $this->_systemAttributes
-            )) {
+            if(in_array($attribute->getAttributeCode(), $this->_systemAttributes)) {
                 continue;
             }
             if($this->getSourceModel()->getData($attribute->getAttributeCode())) {
@@ -95,8 +111,14 @@ class Mage_Lucene_Model_Index_Document_Product
                 }
             }
         }
+        return $this;
     }
 
+    /**
+     * Add searchable attributes and values to indexed document
+     * 
+     * @return string
+     **/
     protected function addSearchableAttributes()
     {
         foreach($this->getSearchableAttributes() as $attribute) {
@@ -121,18 +143,24 @@ class Mage_Lucene_Model_Index_Document_Product
                 }
             }
         }
+        return $this;
     }
 
+    /**
+     * Returns product model
+     * 
+     * @return Mage_Catalog_Model_Product
+     **/
     protected function getSourceModel()
     {
-        if(!isset($this->_entityModel)) {
-            $this->_entityModel = Mage::getModel('catalog/product')
-                ->setStoreId($this->getStore()->getId())
-                ->load($this->_id);
-        }
         return $this->_entityModel;
     }
 
+    /**
+     * Returns collection of all searchable Attributes
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     **/
     protected function getSearchableAttributes()
     {
         if(!isset($this->_searchableAttributes)) {
@@ -159,6 +187,11 @@ class Mage_Lucene_Model_Index_Document_Product
         return $return;
     }    
 
+    /**
+     * Returns collection of all filterable Attributes
+     *
+     * @return Mage_Eav_Model_Mysql4_Entity_Attribute_Collection
+     **/
     protected function getFilterableAttributes()
     {
         if(!isset($this->_searchableAttributes)) {
