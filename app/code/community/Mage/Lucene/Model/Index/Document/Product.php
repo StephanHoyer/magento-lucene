@@ -11,10 +11,11 @@ class Mage_Lucene_Model_Index_Document_Product
      *
      * return Mage_Catalog_Model_Resource_Eav_Mysql4_Product_Collection
      */
-    protected function getProductCollection()
+    protected function getProductCollection($store)
     {
         return Mage::getModel('catalog/product')
             ->getCollection()
+            ->addStoreFilter($store)
             ->setVisibility(Mage::getModel('catalog/product_visibility')->getVisibleInSearchIds())
             ->addAttributeToSelect($this->getSearchableAttributesCodes(), true)
             ->addAttributeToSelect($this->getFilterableAttributesCodes(), true);
@@ -33,13 +34,10 @@ class Mage_Lucene_Model_Index_Document_Product
                 continue;
             };
             $this->setStore($store);
-            $collection = $this
-                ->getProductCollection()
-                ->addStoreFilter($store)
-            foreach($collection as $entity) {
+            foreach($this->getProductCollection($store) as $product) {
                 $this->getEntitySearchModel()
                     ->setStore($store)
-                    ->index($entity);
+                    ->index($product);
             }
         }
         return $this;
@@ -70,7 +68,7 @@ class Mage_Lucene_Model_Index_Document_Product
      * 
      * @return string
      **/
-    protected function addAttributes($sourceModel)
+    protected function addAttributes()
     {
         $this->addField(Zend_Search_Lucene_Field::Text('name',
             $this->getSourceModel()->getName(), self::ENCODING));
@@ -144,16 +142,6 @@ class Mage_Lucene_Model_Index_Document_Product
             }
         }
         return $this;
-    }
-
-    /**
-     * Returns product model
-     * 
-     * @return Mage_Catalog_Model_Product
-     **/
-    protected function getSourceModel()
-    {
-        return $this->_entityModel;
     }
 
     /**
