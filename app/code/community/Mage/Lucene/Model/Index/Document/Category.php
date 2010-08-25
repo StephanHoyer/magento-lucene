@@ -5,16 +5,51 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
     const SHORT_CONTENT_CHAR_COUNT = 1000;
 
     /**
-     * Returns collection of all active categories.
+     * Returns collection of all active categories of given store.
      *
      * @return Mage_Catalog_Model_Resource_Eav_Mysql4_Category_Collection
      **/
-    protected function getEntityCollection()
+    protected function getCategoryCollection($store)
     {
-        return Mage::getModel('catalog/category')
-            ->getCollection()
-            ->addIsActiveFilter();
+        $collection = Mage::getModel('catalog/category')
+            ->getCategories($store->getRootCategoryId(), 0, false, true, false)
+            ->setStore($store)
+            ->addAttributeToSelect('description', true)
+            ->addAttributeToSelect('name', true)
+            ->addAttributeToSelect('image', true)
+            ->addAttributeToSelect('landing_page', true)
+            ->addAttributeToSelect('url_key', true)
+            ;
+        return $collection;
     }
+
+    /**
+     * Indexes all categories for all storeviews.
+     * 
+     * @return Mage_Lucene_Model_Index_Document_Abstract
+     **/
+    public function indexAll()
+    {
+        foreach(Mage::getModel('core/store')->getCollection() as $store) {
+            /* Don't index admin */
+            if($store->getId() == 0) {
+                continue;
+            };
+            $this->setStore($store);
+
+            foreach($this->getCategoryCollection($store) as $category) {
+                $category->setStoreId($store->getId());
+                $category->getUrlInstance()->setStore($store);
+                $this->getEntitySearchModel()
+                    ->setStore($store)
+                    ->index($category);
+            }
+
+        }
+        return $this;
+    }
+
+
 
     /**
      * Returns instance of this class.
@@ -43,7 +78,7 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
      **/
     protected function addAttributes()
     {
-        $content = strip_tags($this->getStaticBlock($this->getSourceModel()));
+        $content = strip_tags($this->getStaticBlock());
         $this->addField(Zend_Search_Lucene_Field::UnStored('content', $content, self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::Text('name',
                 $this->getSourceModel()->getName(), self::ENCODING));
@@ -70,26 +105,11 @@ class Mage_Lucene_Model_Index_Document_Category extends Mage_Lucene_Model_Index_
     }
 
     /**
-     * Returns category related to this search document.
-     *
-     * @return Mage_Catalog_Model_Category
-     **/
-    protected function getSourceModel()
-    {
-        if(!isset($this->_entityModel)) {
-            $this->_entityModel = Mage::getModel('catalog/category')
-                ->setStoreId(Mage::app()->getStore()->getId())
-                ->load($this->_id);
-        }
-        return $this->_entityModel;
-    }
-
-    /**
      * Returns HTML content of static block of this category.
      *
      * @return String
      **/
-    protected function getStaticBlock($category)
+    protected function getStaticBlock()
     {
         return Mage::app()->getLayout()->createBlock('cms/block')
             ->setBlockId($this->getSourceModel()->getLandingPage())
