@@ -54,12 +54,16 @@ class Mage_Lucene_Model_Filter extends Varien_Object
     }
 
     /**
-     * Returns Title for this value.
+     * Returns Title for this filter.
      * 
      * @return String
      **/
     public function getTitle()
     {
-        return $this->_key;
+        $title = Mage::getModel('eav/entity_attribute')->loadByCode(
+            Mage::helper('lucene')->getProductEntityTypeId(), 
+            $this->_key
+        )->getFrontendLabel();
+        return $title ? $title : $this->_key;
     }
 }

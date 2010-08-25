@@ -154,7 +154,7 @@ class Mage_Lucene_Model_Index_Document_Product
         if(!isset($this->_searchableAttributes)) {
             $this->_searchableAttributes = Mage::getModel('eav/entity_attribute')
                 ->getCollection()
-                ->setEntityTypeFilter($this->getProductEntityTypeId());
+                ->setEntityTypeFilter(Mage::helper('lucene')->getProductEntityTypeId());
             $this->_searchableAttributes->getSelect()
                 ->where('additional_table.is_searchable = ?', 1);
         }
@@ -185,7 +185,7 @@ class Mage_Lucene_Model_Index_Document_Product
         if(!isset($this->_searchableAttributes)) {
             $this->_searchableAttributes = Mage::getModel('eav/entity_attribute')
                 ->getCollection()
-                ->setEntityTypeFilter($this->getProductEntityTypeId());
+                ->setEntityTypeFilter(Mage::helper('lucene')->getProductEntityTypeId());
             $this->_searchableAttributes->getSelect()
                 ->where('additional_table.is_filterable_in_search = ?', 1);
         }
@@ -205,16 +205,4 @@ class Mage_Lucene_Model_Index_Document_Product
         }
         return $return;
     }    
-
-    /**
-     * Returns typeId of product model
-     * 
-     * @return int
-     **/
-    protected function getProductEntityTypeId()
-    {
-        return Mage::getModel('eav/entity_type')
-            ->loadByCode(Mage_Catalog_Model_Product::ENTITY)
-            ->getEntityTypeId();
-    }
 }
