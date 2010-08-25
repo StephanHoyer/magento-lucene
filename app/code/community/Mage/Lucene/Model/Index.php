@@ -8,7 +8,7 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     var $_results;
     var $_query;
     var $_resultsFilters = array();
-    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image', 'name');
+    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image', 'name', 'store');
 
 
     protected function getDefaultSimilarity()
