@@ -76,8 +76,8 @@ class Mage_Lucene_Model_Index_Document_Product
             $this->getSourceModel()->getShortDescription(), self::ENCODING));
         $this->addField(Zend_Search_Lucene_Field::UnIndexed('url',
             $this->getSourceModel()->getProductUrl(), self::ENCODING));
-        $this->addSearchableAttributes();
         $this->addFilterableAttributes();
+        $this->addSearchableAttributes();
     }
 
     /**

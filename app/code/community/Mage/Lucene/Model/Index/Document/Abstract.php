@@ -7,10 +7,10 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
     const ENCODING = 'UTF-8';
 
     /**
-     * @var CONST code of the attribute that contains the store id
+     * @var CONST code of the attribute that contains the store id 
      **/
     const STORE_ATTRIBUTE_CODE = 'store';
-
+    
     /**
      * @var int Id of document related entity
      **/
@@ -67,7 +67,7 @@ abstract class Mage_Lucene_Model_Index_Document_Abstract extends Varien_Object
         $query = new Zend_Search_Lucene_Search_Query_MultiTerm();
         $query->addTerm(new Zend_Search_Lucene_Index_Term($this->_id, 'entity_id'),true);
         $query->addTerm(new Zend_Search_Lucene_Index_Term($this->getDoctype(), 'doctype'),true);
-        $query->addTerm(new Zend_Search_Lucene_Index_Term($this->getStore()->getId(),
+        $query->addTerm(new Zend_Search_Lucene_Index_Term($this->getStore()->getId(), 
             self::STORE_ATTRIBUTE_CODE),true);
         $this->deleteByQuery($query);
         return $this;
