@@ -45,10 +45,14 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 	        $this->_query->addTerm(new Zend_Search_Lucene_Index_Term(Mage::app()->getStore()->getId(), 'store'),true);
             foreach($this->getCurrentFilters() as $filter) {
                 if($filter->getKey() == self::QUERY_KEY) {
-                    $this->_query->addTerm(
-                        new Zend_Search_Lucene_Index_Term(
-                            strtolower($filter->getValue())
-                        ), true);
+                    $terms = mb_split("\W", $filter->getValue());
+                    foreach ($terms as $term) {
+                        if(!trim($term)) {
+                            continue;
+                        }
+                        $this->_query->addTerm(
+                            new Zend_Search_Lucene_Index_Term(strtolower($term)), true);
+                    }
                 } else {
                     $this->_query->addTerm(
                         new Zend_Search_Lucene_Index_Term(
