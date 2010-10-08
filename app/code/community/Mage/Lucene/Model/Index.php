@@ -8,7 +8,8 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     var $_results;
     var $_query;
     var $_resultsFilters = array();
-    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image', 'name', 'store');
+    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image',
+        'name', Mage_Lucene_Model_Index_Document_Abstract::STORE_ATTRIBUTE_CODE);
 
 
     protected function getDefaultSimilarity()
@@ -42,7 +43,8 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     {
         if(!isset($this->_query)) {
             $this->_query = new Zend_Search_Lucene_Search_Query_MultiTerm();
-	        $this->_query->addTerm(new Zend_Search_Lucene_Index_Term(Mage::app()->getStore()->getId(), 'store'),true);
+	        $this->_query->addTerm(new Zend_Search_Lucene_Index_Term(Mage::app()->getStore()->getId(),
+	           Mage_Lucene_Model_Index_Document_Abstract::STORE_ATTRIBUTE_CODE),true);
             foreach($this->getCurrentFilters() as $filter) {
                 if($filter->getKey() == self::QUERY_KEY) {
                     $terms = mb_split("\W", $filter->getValue());
