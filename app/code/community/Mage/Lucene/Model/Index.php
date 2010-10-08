@@ -3,12 +3,24 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
 {
     const INDEX_DIR = 'var/lucene/index';
     const QUERY_KEY = 'q';
-
+    
+    /**
+     * String which contains all chars used to tokenize search term to multiple terms
+     * @var String
+     */
+    const TERM_TOKENIZE_CHARS = ' ,;|';
+    
+    /**
+     * Prefix to track prohibited search terms
+     * @var String
+     */
+    const PROHIBITED_MARKER_PREFIX = '-';
+    
     var $_currentFilters = array();
     var $_results;
     var $_query;
     var $_resultsFilters = array();
-    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image',
+    var $_excludeAttributes = array('short_content', 'url', 'entity_id', 'image', 
         'name', Mage_Lucene_Model_Index_Document_Abstract::STORE_ATTRIBUTE_CODE);
 
 
@@ -43,18 +55,11 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
     {
         if(!isset($this->_query)) {
             $this->_query = new Zend_Search_Lucene_Search_Query_MultiTerm();
-	        $this->_query->addTerm(new Zend_Search_Lucene_Index_Term(Mage::app()->getStore()->getId(),
+	        $this->_query->addTerm(new Zend_Search_Lucene_Index_Term(Mage::app()->getStore()->getId(), 
 	           Mage_Lucene_Model_Index_Document_Abstract::STORE_ATTRIBUTE_CODE),true);
             foreach($this->getCurrentFilters() as $filter) {
                 if($filter->getKey() == self::QUERY_KEY) {
-                    $terms = mb_split("\W", $filter->getValue());
-                    foreach ($terms as $term) {
-                        if(!trim($term)) {
-                            continue;
-                        }
-                        $this->_query->addTerm(
-                            new Zend_Search_Lucene_Index_Term(strtolower($term)), true);
-                    }
+                    $this->addSearchTerm($filter->getValue());
                 } else {
                     $this->_query->addTerm(
                         new Zend_Search_Lucene_Index_Term(
@@ -65,6 +70,37 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
             }
         }
         return $this->_query;
+    }
+    
+    /**
+     * Adds multiple search terms to query based on given string. Therfore the string is
+     * seperated by TERM_EXPLODE_CHAR. If a term has a PROHIBITED_MARKER_PREFIX as prefix
+     * the term will be marked as prohibited
+     *  
+     * @param String $terms
+     */
+    protected function addSearchTerm($terms)
+    {
+        $term = strtok($terms, self::TERM_TOKENIZE_CHARS);
+        while($term) {
+            $prohibited = $required = false;
+            if (
+                preg_match(sprintf('/^%s(.*)/', self::PROHIBITED_MARKER_PREFIX), 
+                    $term, $prohibitedTerms) && 
+                count($prohibitedTerms) > 0 && 
+                $prohibitedTerms[1]
+            ) {
+                $prohibited = true;
+                $term = $prohibitedTerms[1];
+            } else {
+                $required = true;
+            }
+            $this->_query->addTerm(
+                new Zend_Search_Lucene_Index_Term(strtolower($term)), 
+                    $required && !$prohibited
+            );
+            $term = strtok(self::TERM_TOKENIZE_CHARS);
+        }
     }
 
     public function getQueryString()
