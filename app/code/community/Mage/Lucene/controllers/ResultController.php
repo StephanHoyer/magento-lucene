@@ -1,5 +1,5 @@
 <?php
-class Mage_Lucene_IndexController extends Mage_Core_Controller_Front_Action
+class Mage_Lucene_ResultController extends Mage_Core_Controller_Front_Action
 {
     /**
      * Action to run search query.

@@ -161,5 +161,30 @@ class Mage_Lucene_Model_Index extends Zend_Search_Lucene_Proxy
         unset($filters[self::QUERY_KEY]);
         return $filters;
     }
+    
+    public function getProductCollection()
+    {
+        $collection = Mage::getModel('catalog/product')->getCollection();
+        $collection->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
+            ->setStore(Mage::app()->getStore())
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+            ->addStoreFilter()
+            ->addUrlRewrite();
+
+        Mage::getSingleton('catalog/product_status')->addVisibleFilterToCollection($collection);
+        Mage::getSingleton('catalog/product_visibility')->addVisibleInSearchFilterToCollection($collection);
+        $ids = array();
+        foreach ($this->getResults() as $result) {
+            Mage::log($result);
+            if($result->getDoctype() == 'product') {
+                $ids[] = $result->getEntityId();
+            }
+        }
+        
+        $collection->addAttributeToFilter('entity_id', array('in' => $ids));
+        return $collection;
+    }
 
 }

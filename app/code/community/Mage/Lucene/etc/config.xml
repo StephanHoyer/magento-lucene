@@ -18,7 +18,7 @@
                 <use>standard</use>
                 <args>
                     <module>Mage_Lucene</module>
-                    <frontName>search</frontName>
+                    <frontName>catalogsearch</frontName>
                 </args>
             </lucene>
         </routers>
@@ -44,6 +44,11 @@
             <lucene>
                 <class>Mage_Lucene_Block</class>
             </lucene>
+            <catalogsearch>
+                <rewrite>
+                    <result>Mage_Lucene_Block_CatalogSearch_Result</result>
+                </rewrite>
+            </catalogsearch>
         </blocks>
         <helpers>
             <lucene>
